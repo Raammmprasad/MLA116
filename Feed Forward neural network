@@ -1,0 +1,28 @@
+# prompt:  to implement feed forward neural network
+
+import numpy as np
+
+class NeuralNetwork:
+    def __init__(self, layers):
+        self.layers = layers
+        self.weights = []
+        self.biases = []
+        for i in range(len(layers) - 1):
+            self.weights.append(np.random.randn(layers[i], layers[i+1]))
+            self.biases.append(np.random.randn(layers[i+1]))
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+
+    def forward(self, x):
+        for i in range(len(self.layers) - 1):
+            x = self.sigmoid(np.dot(x, self.weights[i]) + self.biases[i])
+        return x
+
+# Example usage:
+layers = [2, 3, 1]  # Input layer with 2 neurons, hidden layer with 3 neurons, output layer with 1 neuron
+nn = NeuralNetwork(layers)
+
+input_data = np.array([0.5, 0.8])  # Sample input data
+output = nn.forward(input_data)
+print("Output:", output)

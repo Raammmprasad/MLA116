@@ -1,0 +1,39 @@
+# prompt: implement Travelling Salesman Problem
+
+import sys
+
+def travellingSalesmanProblem(graph, s):
+    vertex = []
+    for i in range(len(graph)):
+      if i != s:
+        vertex.append(i)
+
+    min_path = sys.maxsize
+    next_permutation(vertex, 0, len(vertex)-1, graph, s, min_path)
+    return min_path
+
+def next_permutation(arr, l, r, graph, s, min_path):
+    if l == r:
+        current_pathweight = 0
+        k = s
+        for i in range(len(arr)):
+            current_pathweight += graph[k][arr[i]]
+            k = arr[i]
+        current_pathweight += graph[k][s]
+        min_path = min(min_path, current_pathweight)
+
+    else:
+        for i in range(l,r+1):
+            arr[l], arr[i] = arr[i], arr[l]
+            next_permutation(arr, l+1, r, graph, s, min_path)
+            arr[l], arr[i] = arr[i], arr[l]
+
+
+if __name__ == '__main__':
+
+    graph = [[0, 10, 15, 20],
+             [10, 0, 35, 25],
+             [15, 35, 0, 30],
+             [20, 25, 30, 0]]
+    s = 0
+    print(travellingSalesmanProblem(graph, s))

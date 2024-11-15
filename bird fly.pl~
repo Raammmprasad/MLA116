@@ -1,0 +1,10 @@
+bird(eagle).
+bird(penguin).
+bird(parrot).
+can_fly(eagle).
+can_fly(parrot).
+can_fly(Bird):-
+    bird(Bird),
+    \+ can_fly(Bird),
+    Bird \= penguin.
+

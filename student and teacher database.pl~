@@ -1,0 +1,7 @@
+teaches(ram,math).
+teaches(uma,sci).
+studies(sne,math).
+studies(sri,sci).
+teaches_of(student,teacher) :-
+    studies(student,subject),
+    teaches(teacher,subject).

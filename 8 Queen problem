@@ -1,0 +1,48 @@
+def solve_nqueens(n):
+  """Solves the N-Queens problem using backtracking.
+
+  Args:
+    n: The size of the chessboard (NxN).
+
+  Returns:
+    A list of lists representing the solution, where each inner list contains
+    the column position of the queen for each row. Returns None if no solution
+    exists.
+  """
+
+  def is_safe(row, col, board):
+    """Checks if it's safe to place a queen at the given row and column."""
+    for i in range(row):
+      if board[i] == col or abs(board[i] - col) == row - i:
+        return False
+    return True
+
+  def solve_nqueens_recursive(row, board):
+    """Recursive function to solve the N-Queens problem."""
+    if row == n:
+      return board
+
+    for col in range(n):
+      if is_safe(row, col, board):
+        board[row] = col
+        solution = solve_nqueens_recursive(row + 1, board)
+        if solution:
+          return solution
+    return None
+
+  board = [-1] * n  # Initialize the board with -1 (no queen placed)
+  return solve_nqueens_recursive(0, board)
+
+
+if __name__ == "__main__":
+  n = 8  # Change this to solve for a different board size
+  solution = solve_nqueens(n)
+
+  if solution:
+    print("Solution found:")
+    for row in range(n):
+      line = ['.' for _ in range(n)]
+      line[solution[row]] = 'Q'
+      print(''.join(line))
+  else:
+    print("No solution exists for N =", n)

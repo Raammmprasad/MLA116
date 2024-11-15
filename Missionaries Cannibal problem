@@ -1,0 +1,67 @@
+
+
+def solve_missionaries_cannibals(num_missionaries, num_cannibals):
+  
+
+  initial_state = (num_missionaries, num_cannibals, 1, 0, 0)  
+  visited = set()
+  queue = [(initial_state, [])]
+
+  while queue:
+    current_state, path = queue.pop(0)
+    if current_state == (0, 0, 0, num_missionaries, num_cannibals):
+      return path + [current_state]
+
+    visited.add(current_state)
+
+    missionaries_left, cannibals_left, boat_side, missionaries_right, cannibals_right = current_state
+
+    possible_moves = []
+    if boat_side == 1: 
+      for num_m in range(3):
+        for num_c in range(3):
+          if 0 < num_m + num_c <= 2 and missionaries_left - num_m >= 0 and cannibals_left - num_c >= 0:
+            new_state = (
+                missionaries_left - num_m,
+                cannibals_left - num_c,
+                0,
+                missionaries_right + num_m,
+                cannibals_right + num_c
+            )
+            if is_valid(new_state) and new_state not in visited:
+              possible_moves.append(new_state)
+    else:  
+      for num_m in range(3):
+        for num_c in range(3):
+          if 0 < num_m + num_c <= 2 and missionaries_right - num_m >= 0 and cannibals_right - num_c >= 0:
+            new_state = (
+                missionaries_left + num_m,
+                cannibals_left + num_c,
+                1,
+                missionaries_right - num_m,
+                cannibals_right - num_c
+            )
+            if is_valid(new_state) and new_state not in visited:
+              possible_moves.append(new_state)
+
+    for new_state in possible_moves:
+      queue.append((new_state, path + [current_state]))
+
+  return None
+
+def is_valid(state):
+  missionaries_left, cannibals_left, _, missionaries_right, cannibals_right = state
+
+  if (missionaries_left > 0 and cannibals_left > missionaries_left) or \
+     (missionaries_right > 0 and cannibals_right > missionaries_right):
+    return False
+
+  return True
+solution = solve_missionaries_cannibals(3, 3)
+
+if solution:
+  print("Solution found:")
+  for state in solution:
+    print(state)
+else:
+  print("No solution found.")

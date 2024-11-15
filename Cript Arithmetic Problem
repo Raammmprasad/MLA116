@@ -1,0 +1,58 @@
+# prompt: cript arithmetic problem
+
+def solve_cryptarithmetic():
+  """Solves a cryptarithmetic problem like SEND + MORE = MONEY."""
+
+  def is_valid(assignment):
+    """Checks if an assignment of digits to letters is valid."""
+    for word in ["SEND", "MORE", "MONEY"]:
+      if assignment[word[0]] == 0:
+        return False
+    return True
+
+  def evaluate_word(word, assignment):
+    """Evaluates a word with a given digit assignment."""
+    value = 0
+    for letter in word:
+      value = value * 10 + assignment[letter]
+    return value
+
+  def solve_recursive(letters, available_digits, assignment):
+    """Recursively solves the cryptarithmetic problem."""
+    if not letters:
+      if evaluate_word("SEND", assignment) + evaluate_word("MORE", assignment) == evaluate_word("MONEY", assignment):
+        if is_valid(assignment):
+          return assignment
+      return None
+
+    letter = letters[0]
+    for digit in available_digits:
+      new_available_digits = available_digits.copy()
+      new_available_digits.remove(digit)
+      new_assignment = assignment.copy()
+      new_assignment[letter] = digit
+      result = solve_recursive(letters[1:], new_available_digits, new_assignment)
+      if result:
+        return result
+    return None
+
+
+  letters = list(set("SENDMOREMONEY"))
+  available_digits = set(range(10))
+  assignment = {}
+
+  solution = solve_recursive(letters, available_digits, assignment)
+
+  if solution:
+    print("Solution found:")
+    print(f"S = {solution['S']}, E = {solution['E']}, N = {solution['N']}, D = {solution['D']}")
+    print(f"M = {solution['M']}, O = {solution['O']}, R = {solution['R']}, Y = {solution['Y']}")
+    send_value = evaluate_word("SEND", solution)
+    more_value = evaluate_word("MORE", solution)
+    money_value = evaluate_word("MONEY", solution)
+    print(f"{send_value} + {more_value} = {money_value}")
+
+  else:
+    print("No solution found.")
+
+solve_cryptarithmetic()

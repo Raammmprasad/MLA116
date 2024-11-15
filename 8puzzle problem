@@ -1,0 +1,55 @@
+
+
+from collections import deque
+
+class Node:
+    def __init__(self, board, empty_tile_pos):
+        self.board = board
+        self.empty_tile_pos = empty_tile_pos
+
+    def generate_children(self):
+        children = []
+        x, y = self.empty_tile_pos
+        moves = [(x-1, y), (x+1, y), (x, y-1), (x, y+1)]  # Up, Down, Left, Right
+        for new_x, new_y in moves:
+            if 0 <= new_x < 3 and 0 <= new_y < 3:  # Check bounds
+                new_board = [row[:] for row in self.board]  # Deep copy
+                new_board[x][y], new_board[new_x][new_y] = new_board[new_x][new_y], new_board[x][y]
+                children.append(Node(new_board, (new_x, new_y)))
+        return children
+
+def bfs(start_node, goal_state):
+    queue = deque([start_node])
+    visited = set()
+    visited.add(tuple(map(tuple, start_node.board)))  # Add board state to visited
+
+    while queue:
+        current_node = queue.popleft()
+        if current_node.board == goal_state:
+            return True  # Goal reached
+
+        for child in current_node.generate_children():
+            if tuple(map(tuple, child.board)) not in visited:
+                visited.add(tuple(map(tuple, child.board)))
+                queue.append(child)
+
+    return False  
+puzzle_examples = [
+    ([[2, 8, 3], [1, 6, 4], [7, 0, 5]], (2, 1)),
+    ([[1, 0, 3], [4, 2, 5], [7, 8, 6]], (0, 1)),
+    ([[8, 1, 2], [0, 4, 3], [7, 6, 5]], (1, 0)),
+    ([[1, 2, 3], [4, 5, 6], [7, 8, 0]], (2, 2)),
+    ([[1, 2, 3], [4, 5, 0], [7, 8, 6]], (1, 2)),
+    ([[1, 2, 0], [4, 5, 3], [7, 8, 6]], (0, 2)),
+    ([[0, 1, 2], [4, 5, 3], [7, 8, 6]], (0, 0)),
+    ([[1, 2, 3], [7, 4, 5], [8, 6, 0]], (2, 2))
+]
+
+goal_state = [[1, 2, 3], [4, 5, 6], [7, 8, 0]]
+
+for initial_state, empty_tile_pos in puzzle_examples:
+    start_node = Node(initial_state, empty_tile_pos)
+    if bfs(start_node, goal_state):
+        print("Solution found for puzzle:", initial_state)
+    else:
+        print("No solution exists for puzzle:", initial_state)

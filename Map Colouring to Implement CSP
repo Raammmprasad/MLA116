@@ -1,0 +1,68 @@
+# prompt: Map Colouring to Implement CSP
+
+def solve_map_coloring(graph, colors):
+    """
+    Solves the map coloring problem using backtracking.
+
+    Args:
+        graph: A dictionary representing the graph where keys are regions and values are lists of neighboring regions.
+        colors: A list of available colors.
+
+    Returns:
+        A dictionary mapping regions to assigned colors, or None if no solution exists.
+    """
+    assignment = {}  # Stores the color assignment for each region
+
+    def is_safe(region, color):
+        """Checks if assigning 'color' to 'region' is valid."""
+        for neighbor in graph.get(region, []):
+            if neighbor in assignment and assignment[neighbor] == color:
+                return False
+        return True
+
+    def backtrack(region):
+        """Recursive backtracking function."""
+        if not region:  # All regions assigned colors successfully
+            return True
+
+        for color in colors:
+            if is_safe(region, color):
+                assignment[region] = color
+                if backtrack(get_unassigned_region()):
+                    return True
+                assignment.pop(region)  # Backtrack: remove color if it leads to a dead end
+
+        return False  # No valid color found for this region
+
+    def get_unassigned_region():
+        """Returns the first unassigned region."""
+        for region in graph:
+            if region not in assignment:
+                return region
+        return None
+
+    if backtrack(get_unassigned_region()):
+        return assignment
+    else:
+        return None
+
+
+# Example usage:
+graph = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'Q': ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V': ['SA', 'NSW']
+}
+colors = ['Red', 'Green', 'Blue']
+
+solution = solve_map_coloring(graph, colors)
+
+if solution:
+    print("Map Coloring Solution:")
+    for region, color in solution.items():
+        print(f"{region}: {color}")
+else:
+    print("No solution found.")

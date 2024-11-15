@@ -1,0 +1,6 @@
+male(ram).
+male(erri).
+male(Srinu).
+female(sri).
+female(lasya).
+female(uma).
